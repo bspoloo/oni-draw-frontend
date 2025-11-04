@@ -1,0 +1,18 @@
+.canvas-container {
+  border: 2px solid #ddd;
+  border-radius: 10px;
+  overflow: hidden;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+  background: white;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+
+  .img-result {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    display: block;
+    object-fit:fill;
+  }
+}

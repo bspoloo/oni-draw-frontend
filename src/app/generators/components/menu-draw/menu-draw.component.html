@@ -1,0 +1,47 @@
+<div class="left-menu">
+  <div class="menu-content">
+
+    <button matIconButton [matMenuTriggerFor]="menu" aria-label="Example icon-button with a menu">
+      <img src="icons/pencil.png" alt="Lápiz">
+    </button>
+
+    <button mat-button (click)="onDeleteModeSelected()">
+      <img src="icons/eraser.png" alt="Borrador">
+    </button>
+
+    <button mat-button (click)="onEraseSelected()">
+      <img src="icons/trash.png" alt="Borrar">
+    </button>
+
+    <button class="menu-button" (click)="openColorPicker()">
+      <img src="icons/colors.png" alt="Colores">
+    </button>
+
+    <button mat-button (click)="onClick()">
+      <img src="icons/forms.png" alt="Formas">
+    </button>
+
+    <mat-menu #menu="matMenu" class="pencils">
+
+      <div class="brush-options">
+          @for (brush of brushTypes; track brush.id) {
+            <button class="brush-option"
+                    [class.active]="currentBrushType.id === brush.id"
+                    (click)="selectBrush(brush); menu.closed.emit()"
+                    [matTooltip]="brush.name"
+                    >
+              <img [src]="brush.icon" [alt]="brush.name">
+              <!-- <span>{{brush.name}}</span> -->
+            </button>
+          }
+        </div>
+
+      <div class="brush-size">
+        <label class="label-size">Tamaño: {{brushSize}}px</label>
+        <input type="range" min="1" max="50" [value]="brushSize"
+          (input)="onBrushSizeChange($any($event.target).valueAsNumber)" class="size-slider">
+      </div>
+    </mat-menu>
+
+  </div>
+</div>

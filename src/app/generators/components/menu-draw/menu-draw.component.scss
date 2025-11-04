@@ -1,0 +1,66 @@
+.left-menu {
+  position: fixed;
+  left: 0;
+  top: 50%;
+  transform: translateY(-50%);
+  height: auto;
+  width: 80px;
+  z-index: 1000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(255, 255, 255, 0.95);
+  box-shadow: 2px 0 10px rgba(0,0,0,0.1);
+  backdrop-filter: blur(10px);
+  border-radius: 0 12px 12px 0;
+}
+
+.menu-content {
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+  align-items: center;
+  padding: 20px;
+  .pencils {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 10px;
+  }
+}
+
+.color-picker, .brush-size {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 5px;
+}
+
+.brush-options {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+button {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 5px;
+  min-width: auto;
+  // padding: 8px;
+  border: none;
+  background: transparent;
+  cursor: pointer;
+  border-radius: 8px;
+  transition: background 0.3s ease;
+}
+
+button:hover {
+  background: rgba(0, 0, 0, 0.05);
+}
+
+button img {
+  width: 24px;
+  height: 24px;
+}
