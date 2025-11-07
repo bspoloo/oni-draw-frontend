@@ -1,9 +1,13 @@
-.container-draw{
+.container-draw {
   display: flex;
   flex-direction: row;
   justify-content: center;
   align-items: center;
+  gap: 20px;
+  height: calc(100vh - 120px);
+  flex-wrap: wrap;
 }
+
 .canvas-container {
   border: 2px solid #ddd;
   border-radius: 10px;
@@ -19,6 +23,20 @@
     justify-content: center;
     align-items: center;
     display: block;
-    object-fit:fill;
+    object-fit: fill;
+  }
+}
+
+.button-container {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  gap: 10px;
+  margin-top: 10px;
+
+  button {
+    border-radius: 8px;
+    font-weight: 600;
   }
 }

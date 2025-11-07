@@ -1,29 +1,21 @@
 <div class="sketchpad-container">
   <div>
-    <app-menu-draw
-      (colorSelected)="changeColor($event)"
-      (eraseSelected)="clearCanvas()"
-      (brushSizeChanged)="changeSize($event)"
-      (deleteModeSelected)="changeToDeleteMode()"
-      (brushTypeChanged)="changeBrushType($event)"
-      ></app-menu-draw>
+    <app-form-params (paramsGenerate)="generateImage($event) " (paramsImprove)="improveImage($event)">
+    </app-form-params>  
+  </div>
+  <div>
+    <app-menu-draw (colorSelected)="changeColor($event)" (eraseSelected)="clearCanvas()"
+      (brushSizeChanged)="changeSize($event)" (deleteModeSelected)="changeToDeleteMode()"
+      (brushTypeChanged)="changeBrushType($event)"></app-menu-draw>
   </div>
 
   <div class="canvas-container">
-    <canvas
-      #canvas
-      width="512"
-      height="512"
-      (mousedown)="startDrawing($event)"
-      (mousemove)="draw($event)"
-      (mouseup)="stopDrawing()"
-      (mouseleave)="stopDrawing()"
-      (touchstart)="startDrawing($event)"
-      (touchmove)="draw($event)"
-      (touchend)="stopDrawing()"
-      class="drawing-canvas">
+    <canvas #canvas width="512" height="512" (mousedown)="startDrawing($event)" (mousemove)="draw($event)"
+      (mouseup)="stopDrawing()" (mouseleave)="stopDrawing()" (touchstart)="startDrawing($event)"
+      (touchmove)="draw($event)" (touchend)="stopDrawing()" class="drawing-canvas">
       Tu navegador no soporta canvas.
     </canvas>
   </div>
-  <button mat-button (click)="generateImage()">Generate image</button>
+
+  <!-- <button mat-button (click)="generateImage()">Generate image</button> -->
 </div>

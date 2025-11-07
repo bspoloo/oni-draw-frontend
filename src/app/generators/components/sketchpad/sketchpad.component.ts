@@ -1,4 +1,4 @@
-import { AfterViewInit, Component, ElementRef, EventEmitter, HostListener, Output, ViewChild } from '@angular/core';
+import { AfterViewInit, Component, ElementRef, EventEmitter, HostListener, Input, Output, ViewChild } from '@angular/core';
 import { MenuDrawComponent } from '../menu-draw/menu-draw.component';
 import { Inject, PLATFORM_ID } from '@angular/core';
 import { isPlatformBrowser } from '@angular/common';
@@ -6,30 +6,42 @@ import { Pencil } from '../../../interfaces/pencil.interface';
 import { brushTypes } from '../../../constants/pencils.constant';
 import { GeneratorService } from '../../services/generator.service';
 import { ImageToImageRequest, ImageToImageResponse } from '../../../interfaces/image-to-image.interfaces';
+import { FormParamsComponent } from '../form-params/form-params.component';
+import { Hyperparam } from '../../../interfaces/hyperparam.interface';
+import { MatDialog } from '@angular/material/dialog';
+import { LoadingDialogComponent } from '../../../components/loading-dialog/loading-dialog.component';
+import { ErrorDialogComponent } from '../../../components/error-dialog/error-dialog.component';
+import { TextToImageRequest, TextToImageResponse } from '../../../interfaces/text-to-image.interfaces';
 
 @Component({
   selector: 'app-sketchpad',
-  imports: [MenuDrawComponent],
+  imports: [MenuDrawComponent, FormParamsComponent],
   templateUrl: './sketchpad.component.html',
   styleUrl: './sketchpad.component.scss'
 })
 export class SketchpadComponent implements AfterViewInit {
   @ViewChild('canvas', { static: true }) canvasRef!: ElementRef<HTMLCanvasElement>;
   @Output()
-  public imageUrlResult: EventEmitter<string> = new EventEmitter<string>();
+  public imageUrlResult: EventEmitter<string[]> = new EventEmitter<string[]>();
 
   private ctx!: CanvasRenderingContext2D;
   private isDrawing = false;
   private lastX = 0;
   private lastY = 0;
 
-  // Configuración del pincel
   brushColor = '#000000';
   brushSize = 5;
   brushTypes: Pencil[] = brushTypes;
   currentBrushType = this.brushTypes[0];
 
-  constructor(@Inject(PLATFORM_ID) private platformId: Object, private generatorService: GeneratorService) { }
+  @Input()
+  public hyperparams?: Hyperparam;
+
+  constructor(
+    @Inject(PLATFORM_ID) private platformId: Object,
+    private generatorService: GeneratorService,
+    private dialog: MatDialog
+  ) { }
 
   public ngAfterViewInit(): void {
     if (isPlatformBrowser(this.platformId)) {
@@ -148,26 +160,64 @@ export class SketchpadComponent implements AfterViewInit {
     }
   }
 
-  public generateImage(): void {
+  public generateImage(hyperparams: Hyperparam): void {
+
+    const dialogRef = this.dialog.open(LoadingDialogComponent, {
+      disableClose: true,
+      panelClass: 'custom-dialog',
+    });
+
+    this.generatorService.textToImage(hyperparams as TextToImageRequest).subscribe({
+      next: (response: TextToImageResponse) => {
+        dialogRef.close();
+        console.log('Imagen generada con éxito:', response);
+        this.imageUrlResult.emit(response.filenames);
+      },
+      error: (error) => {
+        console.error('Error al generar la imagen:', error);
+        dialogRef.close();
+        const dialogRefError = this.dialog.open(ErrorDialogComponent, {
+          disableClose: true,
+          data: { message: `Error al generar la imagen: ${error.message}` },
+          panelClass: 'custom-dialog',
+        });
+      }
+    });
+  }
+  public improveImage(hyperparams: Hyperparam): void {
+
+    const dialogRef = this.dialog.open(LoadingDialogComponent, {
+      disableClose: true,
+      panelClass: 'custom-dialog',
+    });
+
     const canvas = this.canvasRef.nativeElement;
     canvas.toBlob((blob: Blob | null) => {
       if (blob) {
         const file = new File([blob], 'drawing.png', { type: 'image/png' });
         const request: ImageToImageRequest = {
           file: file,
-          prompt: 'anime style, high quality, detailed, hair with vibrant colors, masterpiece',
-          filename: 'landscape.png',
-          num_inference_steps: 50,
-          strength: 0.75,
-          guidance_scale: 9
+          prompt: hyperparams.prompt,
+          num_images_per_prompt: hyperparams.num_images_per_prompt,
+          filename: 'canvas_image.png',
+          num_inference_steps: hyperparams.num_inference_steps,
+          strength: hyperparams.strength,
+          guidance_scale: hyperparams.guidance_scale,
         };
         this.generatorService.imageToImage(request).subscribe({
           next: (response: ImageToImageResponse) => {
             console.log('Imagen generada con éxito:', response);
-            this.imageUrlResult.emit(this.generatorService.getImageUrl(response.filename!));
+            dialogRef.close();
+            this.imageUrlResult.emit(response.filenames);
           },
           error: (error) => {
             console.error('Error al generar la imagen:', error);
+            dialogRef.close();
+            const dialogRefError = this.dialog.open(ErrorDialogComponent, {
+              disableClose: true,
+              data: { message: `Error al generar la imagen: ${error.message}` },
+              panelClass: 'custom-dialog',
+            });
           }
         });
       }

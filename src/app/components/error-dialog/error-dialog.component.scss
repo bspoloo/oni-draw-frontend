@@ -1,0 +1,22 @@
+.error-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  padding: 2rem;
+}
+
+h2 {
+  color: #c62828;
+  margin-bottom: 1rem;
+}
+
+p {
+  margin-bottom: 1.5rem;
+  font-size: 1rem;
+}
+
+button {
+  border-radius: 8px;
+  font-weight: 600;
+}

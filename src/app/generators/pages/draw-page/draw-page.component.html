@@ -1,8 +1,19 @@
 <div class="container-draw">
-  <app-sketchpad (imageUrlResult)="showGeneratedImage($event)"></app-sketchpad>
   <!-- <app-result-pad [imageUrl]="this.imageUrl"></app-result-pad> -->
+
+  <app-sketchpad (imageUrlResult)="showGeneratedImage($event)" [hyperparams]="this.hyperparamsGenerate"></app-sketchpad>
 
   <div class="canvas-container img-result">
     <img #image_result src="{{this.imageUrl}}" alt="image" width="512" height="512">
+  </div>
+  <div class="button-container">
+    <button mat-raised-button color="primary" type="submit" (click)="backImage()" [disabled]="this.filenames.length < 2">
+      <mat-icon aria-hidden="false" aria-label="Example home icon" fontIcon="arrow_back"></mat-icon>
+      Anterior
+    </button>
+    <button mat-raised-button color="primary" type="submit" (click)="nextImage()" [disabled]="this.filenames.length < 2">
+      <mat-icon aria-hidden="false" aria-label="Example home icon" fontIcon="arrow_forward"></mat-icon>
+      Siguiente
+    </button>
   </div>
 </div>

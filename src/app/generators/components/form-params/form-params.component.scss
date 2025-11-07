@@ -1,0 +1,64 @@
+.hyper-form {
+  display: flex;
+  flex-direction: column;
+  // gap: 1.5rem;
+  padding: 1.5rem;
+  background: white;
+  border-radius: 16px;
+  color: #fff;
+  // height: 512px;
+  width: 350px  ;
+
+  .form-field {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+
+    mat-slider {
+      width: 100%;
+    }
+
+    .form-label-container {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+
+      .form-label {
+        font-weight: 300;
+        color: black;
+      }
+
+      .form-value {
+        font-size: 0.9rem;
+        color: #aaa;
+      }
+    }
+
+    mat-hint, mat-error {
+      font-size: 0.8rem;
+      color: #ff8080;
+      margin-top: 0.25rem;
+    }
+  }
+  .form-field-data {
+    display: flex;
+    flex-direction: flex;
+    gap: 0.5rem;
+  }
+
+  .full-width {
+    width: 100%;
+  }
+
+  .form-actions {
+    display: flex;
+    justify-content: space-around;
+    // margin-top: 1rem;
+    gap: 10px;
+
+    button {
+      border-radius: 8px;
+      font-weight: 600;
+    }
+  }
+}

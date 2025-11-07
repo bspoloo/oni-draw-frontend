@@ -1,8 +1,9 @@
 .sketchpad-container {
   display: flex;
-  flex-direction: column;
+  flex-direction: row;
+  justify-content: center;
   align-items: center;
-  padding: 20px;
+  gap: 20px;
   background-color: #f5f5f5;
   // min-height: 100vh;
 }

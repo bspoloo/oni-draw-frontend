@@ -1,5 +1,4 @@
-export interface ImageToImageRequest {
-  file: File;
+export interface TextToImageRequest {
   prompt: string;
   filename?: string;
   num_inference_steps?: number;
@@ -7,8 +6,8 @@ export interface ImageToImageRequest {
   guidance_scale?: number;
   num_images_per_prompt: number
 }
-export interface ImageToImageResponse {
+export interface TextToImageResponse {
   status: 'success' | 'error';
   message?: string;
-  filenames: string[];
+  filenames?: string[];
 }
