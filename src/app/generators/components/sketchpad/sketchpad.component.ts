@@ -1,4 +1,4 @@
-import { AfterViewInit, Component, ElementRef, EventEmitter, HostListener, Input, Output, ViewChild } from '@angular/core';
+import { AfterViewInit, Component, ElementRef, EventEmitter, HostListener, Input, Output, viewChild, ViewChild } from '@angular/core';
 import { MenuDrawComponent } from '../menu-draw/menu-draw.component';
 import { Inject, PLATFORM_ID } from '@angular/core';
 import { isPlatformBrowser } from '@angular/common';
@@ -21,6 +21,8 @@ import { TextToImageRequest, TextToImageResponse } from '../../../interfaces/tex
 })
 export class SketchpadComponent implements AfterViewInit {
   @ViewChild('canvas', { static: true }) canvasRef!: ElementRef<HTMLCanvasElement>;
+  @ViewChild('fileInput') fileInput!: ElementRef<HTMLInputElement>;
+
   @Output()
   public imageUrlResult: EventEmitter<string[]> = new EventEmitter<string[]>();
 
@@ -33,6 +35,8 @@ export class SketchpadComponent implements AfterViewInit {
   brushSize = 5;
   brushTypes: Pencil[] = brushTypes;
   currentBrushType = this.brushTypes[0];
+
+  private currentImageData : ImageData | null = null;
 
   @Input()
   public hyperparams?: Hyperparam;
@@ -222,5 +226,78 @@ export class SketchpadComponent implements AfterViewInit {
         });
       }
     });
+  }
+
+  public loadImageToCanvas(file: File): void {
+    console.log(file);
+
+    const canvas = this.canvasRef.nativeElement;
+    const ctx = this.ctx;
+
+    const reader = new FileReader();
+
+    reader.onload = (e: any) => {
+      const img = new Image();
+
+      img.onload = () => {
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+        const scale = Math.min(
+          canvas.width / img.width,
+          canvas.height / img.height
+        );
+
+        const width = img.width * scale;
+        const heigth = img.height * scale;
+        const x = (canvas.width - width) / 2;
+        const y = (canvas.height - heigth) / 2;
+
+        ctx.drawImage(img, x, y, width, heigth);
+      };
+
+      img.onerror = (error: any) => {
+        const dialogRefError = this.dialog.open(ErrorDialogComponent, {
+          disableClose: true,
+          data: { message: `Error al generar la imagen: ${error.message}` },
+          panelClass: 'custom-dialog',
+        });
+      }
+      img.src = e.target.result;
+    };
+
+    reader.onerror = (error: any) => {
+      const dialogRefError = this.dialog.open(ErrorDialogComponent, {
+        disableClose: true,
+        data: { message: `Error al generar la imagen: ${error.message}` },
+        panelClass: 'custom-dialog',
+      });
+    }
+    reader.readAsDataURL(file);
+  }
+  public openFilePicker() : void {
+    this.fileInput.nativeElement.click();
+  }
+
+  public async onFileSelected(event : any): Promise<void>{
+    const file: File = event.target.files[0];
+
+    if(!file) return;
+
+    if(!file.type.startsWith('image/')){
+      const dialogRefError = this.dialog.open(ErrorDialogComponent, {
+        disableClose: true,
+        data: { message: `Por favor, selecciona un archivo de imagen`},
+        panelClass: 'custom-dialog',
+      });
+      return;
+    }
+
+    this.loadImageToCanvas(file);
+
+    event.target.value = '';
+  }
+  public saveCurrentImageData() : void {
+    const canvas = this.canvasRef.nativeElement;
+    this.currentImageData = this.ctx.getImageData(0,0, canvas.width, canvas.height);
   }
 }
