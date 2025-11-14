@@ -1,65 +1,55 @@
 <form [formGroup]="form" class="hyper-form">
   <!-- Strength -->
-  <div class="form-field">
-    <div class="form-label-container">
-      <label class="form-label">Strength</label>
-      <span class="form-value">{{ form.value.strength | number:'1.2-2' }}</span>
+  <div class="lines">
+    <div class="form-field">
+      <div class="form-label-container">
+        <label class="form-label">Strength</label>
+        <span class="form-value">{{ form.value.strength | number:'1.2-2' }}</span>
+      </div>
+      <mat-slider min="0" max="1" step="0.01">
+        <input matSliderThumb formControlName="strength" />
+      </mat-slider>
+      <mat-hint *ngIf="form.controls['strength'].invalid">
+        {{ errorMessage('strength') }}
+      </mat-hint>
     </div>
-    <mat-slider min="0" max="1" step="0.01">
-      <input matSliderThumb formControlName="strength" />
-    </mat-slider>
-    <mat-hint *ngIf="form.controls['strength'].invalid">
-      {{ errorMessage('strength') }}
-    </mat-hint>
-  </div>
-
-  <!-- Guidance Scale -->
-  <div class="form-field">
-    <div class="form-label-container">
-      <label class="form-label">Guidance Scale</label>
-      <span class="form-value">{{ form.value.guidance_scale | number:'1.1-1' }}</span>
+    <!-- Guidance Scale -->
+    <div class="form-field">
+      <div class="form-label-container">
+        <label class="form-label">Guidance Scale</label>
+        <span class="form-value">{{ form.value.guidance_scale | number:'1.1-1' }}</span>
+      </div>
+      <mat-slider min="0" max="10" step="0.5">
+        <input matSliderThumb formControlName="guidance_scale" />
+      </mat-slider>
+      <mat-hint *ngIf="form.controls['guidance_scale'].invalid">
+        {{ errorMessage('guidance_scale') }}
+      </mat-hint>
     </div>
-    <mat-slider min="0" max="10" step="0.5">
-      <input matSliderThumb formControlName="guidance_scale" />
-    </mat-slider>
-    <mat-hint *ngIf="form.controls['guidance_scale'].invalid">
-      {{ errorMessage('guidance_scale') }}
-    </mat-hint>
   </div>
 
   <div class="form-field-data">
     <mat-form-field appearance="outline" floatLabel="always" class="full-width">
       <mat-label>Number of Inference Steps</mat-label>
-      <input
-        matInput
-        formControlName="num_inference_steps"
-        type="number"
-        min="1"
-        max="150"
-        required
-      />
+      <input matInput formControlName="num_inference_steps" type="number" min="1" max="150" required />
       <mat-error *ngIf="form.controls['num_inference_steps'].invalid">
         {{ errorMessage('num_inference_steps') }}
       </mat-error>
     </mat-form-field>
     <mat-form-field appearance="outline" floatLabel="always" class="full-width">
-      <mat-label>Images per prompt</mat-label>
-      <input
-        matInput
-        formControlName="num_images_per_prompt"
-        type="number"
-        min="1"
-        max="150"
-        required
-      />
+      <mat-label>Images</mat-label>
+      <input matInput formControlName="num_images_per_prompt" type="number" min="1" max="150" required />
       <mat-error *ngIf="form.controls['num_inference_steps'].invalid">
         {{ errorMessage('num_inference_steps') }}
       </mat-error>
     </mat-form-field>
+    <button mat-raised-button color="primary" type="submit" [disabled]="form.invalid" (click)="this.improveImage()">
+      Mejorar
+    </button>
   </div>
 
   <!-- Prompt -->
-  <div class="form-field">
+  <!-- <div class="form-field">
     <mat-form-field appearance="outline" floatLabel="always" class="full-width">
       <mat-label>Prompt</mat-label>
       <textarea
@@ -72,20 +62,12 @@
         {{ errorMessage('prompt') }}
       </mat-error>
     </mat-form-field>
-  </div>
+  </div> -->
 
   <!-- Submit -->
   <div class="form-actions">
-    <button
-      mat-raised-button
-      color="primary"
-      type="submit"
-      [disabled]="form.invalid"
-      (click)="this.improveImage()"
-    >
-      Mejorar dibujo
-    </button>
-    <button
+
+    <!-- <button
       mat-raised-button
       color="primary"
       type="submit"
@@ -93,6 +75,6 @@
       (click)="this.generateImage()"
     >
       Generar imagen
-    </button>
+    </button> -->
   </div>
 </form>
