@@ -1,6 +1,24 @@
 <div class="menu">
   <div>
-    <a href="/">Home</a>
-    <a href="/">Importar imagen</a>
+    <!-- <a href="/">Home</a>
+    <a href="/">Importar imagen</a> -->
+    <!-- <button mat-button color="primary" (click)="improveImage()">
+      Mejorar imagen
+    </button> -->
+
+    <input #fileInput type="file" accept="image/" (change)="onFileSelected($event)" style="display: none;">
+    <button (click)="openFilePicker()">Upload Image</button>
+
+    <button mat-button color="primary" type="submit" (click)="this.openCamera()">
+      Camara
+    </button>
+
+    <button mat-button color="primary" type="submit" (click)="this.openCamera()">
+      Importar
+    </button>
+
+    <button mat-button color="primary" type="submit" (click)="this.improveImage()">
+      Mejorar
+    </button>
   </div>
 </div>

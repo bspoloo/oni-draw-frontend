@@ -6,7 +6,7 @@ import { FormParamsComponent } from '../../components/form-params/form-params.co
 import { Hyperparam } from '../../../interfaces/hyperparam.interface';
 import { MatIconModule } from '@angular/material/icon';
 import { MatButtonModule } from '@angular/material/button';
-import { GeneratorService } from '../../services/generator.service';
+import { GeneratorService } from '../../../services/generator.service';
 
 @Component({
   selector: 'app-draw-page',

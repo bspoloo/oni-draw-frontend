@@ -43,9 +43,9 @@
         {{ errorMessage('num_inference_steps') }}
       </mat-error>
     </mat-form-field>
-    <button mat-raised-button color="primary" type="submit" [disabled]="form.invalid" (click)="this.improveImage()">
+    <!-- <button mat-raised-button color="primary" type="submit" [disabled]="form.invalid" (click)="this.improveImage()">
       Mejorar
-    </button>
+    </button> -->
   </div>
 
   <!-- Prompt -->
@@ -64,10 +64,21 @@
     </mat-form-field>
   </div> -->
 
-  <!-- Submit -->
-  <div class="form-actions">
+  <div class="models">
+    <div *ngIf="this.models.length <= 0 || this.loading" class="model-option">
+      <img src="gifs/sleeping-cute.gif" alt="">
+    </div>
+    <div *ngFor="let model of this.models" class="model-option"
+      [class.selected]="this.getCurrentModel()?.id === model.id" (click)="selectModel(model)">
+      <img [src]="model.image" [alt]="model.name" [width]="200" [matTooltip]="model.name" class="image-model">
+      <!-- <span>{{ model.name }}</span> -->
+    </div>
+  </div>
 
-    <!-- <button
+    <!-- Submit -->
+    <div class="form-actions">
+
+      <!-- <button
       mat-raised-button
       color="primary"
       type="submit"
@@ -76,5 +87,5 @@
     >
       Generar imagen
     </button> -->
-  </div>
+    </div>
 </form>

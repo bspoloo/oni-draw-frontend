@@ -6,6 +6,7 @@ export interface ImageToImageRequest {
   strength?: number;
   guidance_scale?: number;
   num_images_per_prompt: number
+  model_name: string
 }
 export interface ImageToImageResponse {
   status: 'success' | 'error';

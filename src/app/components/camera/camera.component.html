@@ -1,0 +1,57 @@
+<div class="camera-container">
+  <!-- Contenedor de la cámara -->
+  <div class="video-wrapper">
+    <video #video autoplay playsinline class="video-element"></video>
+    <div *ngIf="!video.srcObject" class="camera-placeholder">
+      <mat-icon class="placeholder-icon">photo_camera</mat-icon>
+      <p class="placeholder-text">Cámara no activada</p>
+    </div>
+  </div>
+
+  <!-- Controles de la cámara -->
+  <div class="controls-container">
+    <button
+      mat-raised-button
+      color="primary"
+      (click)="openCamera()"
+      class="control-button">
+      <mat-icon>camera</mat-icon>
+      Abrir Cámara
+    </button>
+
+    <button
+      mat-raised-button
+      color="accent"
+      (click)="takePhoto()"
+      [disabled]="!video.srcObject"
+      class="control-button">
+      <mat-icon>camera_alt</mat-icon>
+      Tomar Foto
+    </button>
+
+    <button
+      mat-stroked-button
+      color="warn"
+      (click)="closeCamera()"
+      [disabled]="!video.srcObject"
+      class="control-button">
+      <mat-icon>camera_off</mat-icon>
+      Cerrar Cámara
+    </button>
+  </div>
+
+  <!-- Preview de la foto -->
+  <div *ngIf="foto" class="photo-preview">
+    <mat-card class="preview-card">
+      <mat-card-header>
+        <mat-card-title>
+          <mat-icon>image</mat-icon>
+          Foto Capturada
+        </mat-card-title>
+      </mat-card-header>
+      <mat-card-content>
+        <img [src]="foto" class="captured-image">
+      </mat-card-content>
+    </mat-card>
+  </div>
+</div>

@@ -1,10 +1,10 @@
-import { AfterViewInit, Component, ElementRef, EventEmitter, HostListener, Input, Output, viewChild, ViewChild } from '@angular/core';
+import { AfterViewInit, Component, ElementRef, EventEmitter, HostListener, Input, Output, viewChild, ViewChild, OnInit } from '@angular/core';
 import { MenuDrawComponent } from '../menu-draw/menu-draw.component';
 import { Inject, PLATFORM_ID } from '@angular/core';
 import { isPlatformBrowser } from '@angular/common';
 import { Pencil } from '../../../interfaces/pencil.interface';
 import { brushTypes } from '../../../constants/pencils.constant';
-import { GeneratorService } from '../../services/generator.service';
+import { GeneratorService } from '../../../services/generator.service';
 import { ImageToImageRequest, ImageToImageResponse } from '../../../interfaces/image-to-image.interfaces';
 import { FormParamsComponent } from '../form-params/form-params.component';
 import { Hyperparam } from '../../../interfaces/hyperparam.interface';
@@ -12,14 +12,15 @@ import { MatDialog } from '@angular/material/dialog';
 import { LoadingDialogComponent } from '../../../components/loading-dialog/loading-dialog.component';
 import { ErrorDialogComponent } from '../../../components/error-dialog/error-dialog.component';
 import { TextToImageRequest, TextToImageResponse } from '../../../interfaces/text-to-image.interfaces';
+import { HyperparamsService } from '../../../services/hyperparams.service';
 
 @Component({
   selector: 'app-sketchpad',
-  imports: [MenuDrawComponent, FormParamsComponent],
+  imports: [MenuDrawComponent],
   templateUrl: './sketchpad.component.html',
   styleUrl: './sketchpad.component.scss'
 })
-export class SketchpadComponent implements AfterViewInit {
+export class SketchpadComponent implements OnInit, AfterViewInit {
   @ViewChild('canvas', { static: true }) canvasRef!: ElementRef<HTMLCanvasElement>;
   @ViewChild('fileInput') fileInput!: ElementRef<HTMLInputElement>;
 
@@ -36,7 +37,7 @@ export class SketchpadComponent implements AfterViewInit {
   brushTypes: Pencil[] = brushTypes;
   currentBrushType = this.brushTypes[0];
 
-  private currentImageData : ImageData | null = null;
+  private currentImageData: ImageData | null = null;
 
   @Input()
   public hyperparams?: Hyperparam;
@@ -44,8 +45,14 @@ export class SketchpadComponent implements AfterViewInit {
   constructor(
     @Inject(PLATFORM_ID) private platformId: Object,
     private generatorService: GeneratorService,
+    private hyperparamsService: HyperparamsService,
     private dialog: MatDialog
   ) { }
+  public ngOnInit(): void {
+    this.generatorService.registerCallbackImproveImage(() => this.improveImage());
+    this.generatorService.registerCallbackCanvasImage((file: File) => this.onFileSelected(file));
+    this.generatorService.registerCallbackLoadImage((image: string) => this.loadImageFromUrl(image));
+  }
 
   public ngAfterViewInit(): void {
     if (isPlatformBrowser(this.platformId)) {
@@ -188,7 +195,11 @@ export class SketchpadComponent implements AfterViewInit {
       }
     });
   }
-  public improveImage(hyperparams: Hyperparam): void {
+
+  public improveImage(): void {
+
+    const hyperparams: Hyperparam = this.hyperparamsService.getHyperparmas();
+    console.log(hyperparams.model_name);
 
     const dialogRef = this.dialog.open(LoadingDialogComponent, {
       disableClose: true,
@@ -203,10 +214,11 @@ export class SketchpadComponent implements AfterViewInit {
           file: file,
           prompt: hyperparams.prompt,
           num_images_per_prompt: hyperparams.num_images_per_prompt,
-          filename: 'canvas_image.png',
+          filename: 'canvas_draw_image.png',
           num_inference_steps: hyperparams.num_inference_steps,
           strength: hyperparams.strength,
           guidance_scale: hyperparams.guidance_scale,
+          model_name: hyperparams.model_name
         };
         this.generatorService.imageToImage(request).subscribe({
           next: (response: ImageToImageResponse) => {
@@ -226,6 +238,36 @@ export class SketchpadComponent implements AfterViewInit {
         });
       }
     });
+  }
+
+  public loadImageFromUrl(url: string): void {
+    const canvas = this.canvasRef.nativeElement;
+    const ctx = this.ctx;
+
+    const img = new Image();
+    img.crossOrigin = 'anonymous';
+
+    img.onload = () => {
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+      const scale = Math.min(canvas.width / img.width, canvas.height / img.height);
+      const width = img.width * scale;
+      const height = img.height * scale;
+      const x = (canvas.width - width) / 2;
+      const y = (canvas.height - height) / 2;
+
+      ctx.drawImage(img, x, y, width, height);
+    };
+
+    img.onerror = (err: any) => {
+      const dialogRefError = this.dialog.open(ErrorDialogComponent, {
+        disableClose: true,
+        data: { message: `Error al cargar la imagen: ${err.message}` },
+        panelClass: 'custom-dialog',
+      });
+    };
+
+    img.src = url;
   }
 
   public loadImageToCanvas(file: File): void {
@@ -274,19 +316,19 @@ export class SketchpadComponent implements AfterViewInit {
     }
     reader.readAsDataURL(file);
   }
-  public openFilePicker() : void {
+  public openFilePicker(): void {
     this.fileInput.nativeElement.click();
   }
 
-  public async onFileSelected(event : any): Promise<void>{
+  public async onFileSelected(event: any): Promise<void> {
     const file: File = event.target.files[0];
 
-    if(!file) return;
+    if (!file) return;
 
-    if(!file.type.startsWith('image/')){
+    if (!file.type.startsWith('image/')) {
       const dialogRefError = this.dialog.open(ErrorDialogComponent, {
         disableClose: true,
-        data: { message: `Por favor, selecciona un archivo de imagen`},
+        data: { message: `Por favor, selecciona un archivo de imagen` },
         panelClass: 'custom-dialog',
       });
       return;
@@ -296,8 +338,9 @@ export class SketchpadComponent implements AfterViewInit {
 
     event.target.value = '';
   }
-  public saveCurrentImageData() : void {
+
+  public saveCurrentImageData(): void {
     const canvas = this.canvasRef.nativeElement;
-    this.currentImageData = this.ctx.getImageData(0,0, canvas.width, canvas.height);
+    this.currentImageData = this.ctx.getImageData(0, 0, canvas.width, canvas.height);
   }
 }

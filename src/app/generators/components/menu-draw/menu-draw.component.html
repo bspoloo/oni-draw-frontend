@@ -17,6 +17,10 @@
       <img src="icons/colors.png" alt="Colores">
     </button>
 
+    <button mat-button (click)="openFormSettings()">
+      <img src="icons/settings.png" alt="Configuración">
+    </button>
+
     <!-- <button mat-button (click)="onClick()">
       <img src="icons/forms.png" alt="Formas">
     </button> -->
@@ -42,6 +46,5 @@
           (input)="onBrushSizeChange($any($event.target).valueAsNumber)" class="size-slider">
       </div>
     </mat-menu>
-
   </div>
 </div>
